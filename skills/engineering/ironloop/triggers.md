@@ -1,4 +1,4 @@
-# Triggers — When to Activate Each Layer
+# Triggers: When to Activate Each Layer
 
 | Trigger | L1: SPEC | L2: GEN | L3: TEST | L4: SIM | L5: PENTEST |
 |---------|:--------:|:-------:|:--------:|:-------:|:-----------:|
@@ -42,3 +42,15 @@ This is how the harness gets stronger over time.
 
 The more critical the system, the more verification budget.
 If your ratio is inverted, you're doing it wrong.
+
+## Measuring the Ratio
+
+The ratio is a measurement, not a slogan. Count tokens per layer:
+
+- Generation: every agent turn in Layer 2 (including compiler-fix loops)
+- Verification: every agent turn in Layers 3 and 5, plus test and mutation
+  generation loops
+
+Report the two totals and the ratio in the PR description under
+`ironloop-ratio:`. A PR without a ratio is not closed. Layer 4 is CPU,
+not tokens; report its wall-clock time separately.

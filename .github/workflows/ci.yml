@@ -1,0 +1,11 @@
+name: self-check
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  skill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/check-skill.sh

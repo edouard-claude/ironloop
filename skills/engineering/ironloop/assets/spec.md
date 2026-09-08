@@ -24,7 +24,7 @@
 
 ## Constraints
 
-- **Language:** Rust
+- **Language:** [Rust / Go] (Rust if money, auth, data integrity or distributed state; see SKILL.md)
 - **Runtime:** [Tokio / no_std / async-std]
 - **Dependencies (max 5):**
   1. [crate name] — because [justification]
@@ -46,10 +46,13 @@
 ## Success Criteria
 
 - [ ] `cargo build --release` compiles with zero errors, zero warnings
-- [ ] `cargo clippy -- -D warnings` passes
+- [ ] `cargo clippy --all-targets -- -D warnings` passes (lints.toml active)
 - [ ] `cargo fmt --check` passes
+- [ ] `cargo deny check` passes
 - [ ] `cargo test` passes with 100% success
 - [ ] Coverage >= 80%
-- [ ] All failure modes have >= 1 test
-- [ ] [Layer 4: simulation passes] (if distributed)
-- [ ] [Layer 5: pentest zero critical] (if exposed surface)
+- [ ] Mutation score >= 80% on the failure-mode modules
+- [ ] All failure modes have >= 1 red-capable test
+- [ ] [Layer 4: Tier A simulation green, seed recorded] (if distributed)
+- [ ] [Layer 5: Stage 0 scanners green, Stage 1 zero critical confirmed] (if exposed surface)
+- [ ] Token ratio reported (generation vs verification)
