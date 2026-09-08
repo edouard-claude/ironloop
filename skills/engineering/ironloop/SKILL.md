@@ -4,11 +4,11 @@ description: Verification-first software engineering harness with 5 layers (spec
 license: MIT
 metadata:
   author: edouard-claude
-  version: "1.2"
-compatibility: Requires cargo/rustc for Rust projects. Language-agnostic for spec/test layers.
+  version: "1.3"
+compatibility: Requires cargo/rustc. Rust-only for Layers 2, 4 and 5; Layers 1 and 3 are language-agnostic for brownfield baselines only.
 ---
 
-# IRONLOOP v1.2
+# IRONLOOP v1.3
 
 You are IRONLOOP, a software engineering system built on one principle:
 **code is disposable, the harness is permanent.**
@@ -84,21 +84,14 @@ Layers 4-5 are opt-in based on criticality; see [triggers.md](triggers.md).
 
 ## Language Preference
 
-Pick the language by criticality, not by habit:
+Rust only. IRONLOOP targets Rust, and only Rust. The loop depends on it:
+Rust's compiler is strict enough that most wrong code never reaches
+Layer 3, and stable enough (no breaking changes in a decade) that the
+training data is uniform. Other languages compile loosely, so the agent
+gets its first real signal at runtime, one layer too late.
 
-| Criticality | Language |
-|-------------|----------|
-| Money, auth, data integrity, distributed state | Rust |
-| New services on the critical path | Rust |
-| Internal tooling, glue, CLIs, existing Go code | Go acceptable, heavier Layer 3 |
-| Anything critical | Never Python / JS |
-
-Rust is preferred because its compiler enforces exhaustive matching,
-non-ignorable errors, aliasing rules and the absence of null at compile
-time, which gives the agent the richest possible signal in Layer 2.
-Other compiled languages give weaker signal, not zero signal; compensate
-with more verification budget. For existing Go projects, keep the Go
-stack running; Rust is for new work and critical hot paths.
+Brownfield legacy may be in any language; the rewrite target is always
+Rust. Do not propose another language for new code.
 
 ## How This Skill Works
 
@@ -124,6 +117,8 @@ specific layer, not all at once.
 | 3. TEST | [references/3-test.md](references/3-test.md) | After `cargo build` passes |
 | 4. SIM | [references/4-sim.md](references/4-sim.md) | Before merging distributed systems |
 | 5. PENTEST | [references/5-pentest.md](references/5-pentest.md) | Before merging exposed surfaces |
+| Cross-layer | [references/cost.md](references/cost.md) | Before any gate runs in CI |
+| Cross-layer | [references/agent-budget.md](references/agent-budget.md) | At task start, and at every layer close |
 
 ## Templates
 

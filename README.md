@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/IRONLOOP-v1.2-8B0000?style=for-the-badge)](https://github.com/edouard-claude/ironloop) [![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org) [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE) [![Agent Skills Spec](https://img.shields.io/badge/Agent_Skills-spec_compliant-10b981?style=for-the-badge)](https://agentskills.io/specification) [![skills.sh](https://skills.sh/b/edouard-claude/ironloop)](https://skills.sh/edouard-claude/ironloop)
+[![Version](https://img.shields.io/badge/IRONLOOP-v1.3-8B0000?style=for-the-badge)](https://github.com/edouard-claude/ironloop) [![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org) [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE) [![Agent Skills Spec](https://img.shields.io/badge/Agent_Skills-spec_compliant-10b981?style=for-the-badge)](https://agentskills.io/specification) [![skills.sh](https://skills.sh/b/edouard-claude/ironloop)](https://skills.sh/edouard-claude/ironloop)
 
 **Code is disposable. The harness is permanent.**
 
@@ -84,19 +84,16 @@ You change an interface used in 40 files, the compiler lists all 40
 errors, the agent fixes them one by one. Every `cannot borrow as mutable`
 is free training data.
 
-Other languages give weaker signal, not zero signal. Go has static types,
-`go vet`, `staticcheck` and `-race`, but nothing stops an ignored error,
-a nil dereference or a non-exhaustive switch from compiling. Python and
-JavaScript give the agent almost nothing at Layer 2.
+Other languages compile loosely, so the agent gets its first real signal
+at runtime, one layer too late. Python and JavaScript give the agent
+almost nothing at Layer 2.
 
-The rule is therefore a matrix, not an absolute:
-
-| Criticality                                     | Language          | Reason                                          |
-| ----------------------------------------------- | ----------------- | ----------------------------------------------- |
-| Money, auth, data integrity, distributed state  | **Rust**          | Compiler is the reviewer; Layer 2 does real work |
-| New services on the critical path               | **Rust**          | Same                                            |
-| Internal tooling, glue, CLIs, existing Go code  | Go acceptable     | Shorter loop; compensate with heavier Layer 3   |
-| Anything critical                               | Never Python / JS | Layer 2 is empty; the harness cannot compensate |
+IRONLOOP targets Rust, and only Rust. The reason is the loop: Rust's
+compiler is strict enough that most wrong code never reaches Layer 3,
+and stable enough (no breaking changes in a decade) that the training
+data is uniform. Brownfield code may be in any language; the rewrite
+target is always Rust. IRONLOOP does not provide Go, Python or JS gates
+and will not.
 
 ## Two Workflows
 
@@ -153,7 +150,9 @@ skills/engineering/ironloop/
 │   ├── 2-gen.md           ← Generation + compiler loop + anti-appeasement lints
 │   ├── 3-test.md          ← TDD layer + mutation testing
 │   ├── 4-sim.md           ← Deterministic simulation + infra chaos
-│   └── 5-pentest.md       ← Deterministic scanners + multi-model pentest
+│   ├── 5-pentest.md       ← Deterministic scanners + multi-model pentest
+│   ├── cost.md            ← Gate cost budgets (per PR vs nightly)
+│   └── agent-budget.md    ← Agent token ceilings + decision journal
 └── assets/                ← Templates and resources
     ├── spec.md             ← Project spec template
     ├── lints.toml          ← Cargo [lints] block to paste into Cargo.toml

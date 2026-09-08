@@ -24,7 +24,7 @@
 
 ## Constraints
 
-- **Language:** [Rust / Go] (Rust if money, auth, data integrity or distributed state; see SKILL.md)
+- **Language:** Rust
 - **Runtime:** [Tokio / no_std / async-std]
 - **Dependencies (max 5):**
   1. [crate name] — because [justification]
@@ -42,6 +42,18 @@
 | Out of memory | [ ] |
 | Dependency timeout | [ ] |
 | Concurrent writes | [ ] |
+
+## Concurrency
+<!-- Functions with shared mutable state. Each row becomes a loom target. -->
+
+| Function | Shared state | Invariant |
+|----------|--------------|-----------|
+| [ ] | [ ] | [ ] |
+
+## Budget
+
+- **Task budget:** [tokens, default 500k]
+- **Blocking CI budget:** [minutes, default 40]
 
 ## Success Criteria
 

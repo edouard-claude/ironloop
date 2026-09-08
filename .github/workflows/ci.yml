@@ -9,3 +9,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: scripts/check-skill.sh
+      - run: scripts/check-journal.sh
