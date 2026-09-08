@@ -1,0 +1,82 @@
+# IRONLOOP Simulation Configuration
+# Layer 4 — Chaos simulation for distributed systems
+
+name: ironloop-sim
+version: 1
+
+# What to simulate
+target:
+  service: [service-name]
+  language: rust
+  test_command: "cargo test --release -- --test-threads=4"
+
+# Cluster configuration
+cluster:
+  nodes: 3                    # Number of service instances
+  image: [docker-image]
+  network: bridge
+  health_check:
+    command: ["curl", "-f", "http://localhost:8080/healthz"]
+    interval_seconds: 5
+    timeout_seconds: 3
+    retries: 10
+
+# Chaos scenarios
+scenarios:
+  # Network chaos
+  - type: network_partition
+    probability: 0.3
+    duration_seconds: 30
+
+  - type: packet_loss
+    rate: 0.2                 # 20% packet loss
+    duration_seconds: 60
+
+  - type: latency_spike
+    latency_ms: 500           # Add 500ms latency
+    jitter_ms: 100
+    duration_seconds: 45
+
+  # Process chaos
+  - type: process_kill
+    signal: SIGKILL
+    target: random             # Kill a random node
+    probability: 0.2
+    restart_after_seconds: 10
+
+  - type: process_pause
+    signal: SIGSTOP
+    duration_seconds: 15
+    target: random
+
+  # Resource chaos
+  - type: memory_pressure
+    fill_percent: 85           # Fill RAM to 85%
+    duration_seconds: 30
+
+  - type: disk_slow
+    latency_ms: 200            # I/O latency
+    duration_seconds: 60
+
+  # Clock chaos
+  - type: clock_skew
+    skew_seconds: 30           # Jump clock forward/back
+    target: random
+
+# Assertions (fail the test if any of these happen)
+assertions:
+  - no_data_corruption: true
+  - no_lost_writes: true
+  - recovery_within_seconds: 60
+  - no_deadlocks: true
+
+# Output
+output:
+  issues:
+    create: true
+    labels: ["ironloop/sim", "automated"]
+    repository: [owner/repo]
+
+  logs:
+    retain_hours: 72
+    level: debug
