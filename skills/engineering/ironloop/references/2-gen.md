@@ -88,10 +88,3 @@ tokens on a loop that isn't converging.
 - **Rust:** the borrow checker is your best reviewer. Every "cannot borrow
   as mutable" error is free training data for the agent. Let it fight,
   but with the lints above active, otherwise it wins by appeasement.
-- **Go:** static types plus `go vet`, `staticcheck` and `go test -race`
-  give real signal, but ignored errors, nil dereferences and
-  non-exhaustive switches compile fine. Use `golangci-lint` with
-  `errcheck`, `nilnil`, `exhaustive` and `gosec` enabled, and move the
-  budget saved in Layer 2 to Layer 3.
-- **Python/JS:** Layer 2 is nearly empty. Layers 3-5 must be
-  proportionally stronger. Avoid these languages for critical systems.

@@ -28,7 +28,7 @@ while IFS= read -r file; do
 done < <(find "$root" -name '*.md' -not -path '*/.git/*')
 
 echo "== expected assets"
-for f in assets/spec.md assets/lints.toml assets/sim.yaml references/1-spec.md references/2-gen.md references/3-test.md references/4-sim.md references/5-pentest.md greenfield.md brownfield.md triggers.md; do
+for f in assets/spec.md assets/lints.toml assets/sim.yaml references/1-spec.md references/2-gen.md references/3-test.md references/4-sim.md references/5-pentest.md references/cost.md references/agent-budget.md greenfield.md brownfield.md triggers.md; do
   [ -f "$skill/$f" ] || { echo "missing $f"; fail=1; }
 done
 
