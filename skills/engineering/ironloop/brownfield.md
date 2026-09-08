@@ -1,4 +1,4 @@
-# Brownfield Workflow — IRONLOOP
+# Brownfield Workflow: IRONLOOP
 
 For existing codebases. Add layers progressively without breaking what works.
 
@@ -13,7 +13,10 @@ For existing codebases. Add layers progressively without breaking what works.
 4. Run tests. Fix any that fail due to misunderstood behavior.
 5. Commit: "ironloop: layer 3 baseline for <module>"
 
-**Exit:** `cargo test` suite exists for all critical paths.
+**Exit:** the test suite (`cargo test`, `go test`, whatever the legacy
+stack runs) exists for all critical paths. Run the stack's mutation tool
+(`cargo mutants`, `go-mutesting`) once to know how much of that baseline
+is red-capable; record the score, it is your starting point.
 
 ## Phase B: Extract Layer 1 (Specs)
 
@@ -34,7 +37,8 @@ For existing codebases. Add layers progressively without breaking what works.
 1. Identify modules that are: distributed, concurrent, or handle data integrity
 2. Add simulation configuration
 3. Run simulation in CI on PRs touching those modules
-4. Fix any flakiness (simulation must be deterministic-ish)
+4. Prefer Tier A (in-process, seeded) over Tier B (infra chaos); a
+   scenario that cannot be replayed from a seed is not a gate
 
 **Exit:** Simulation gate active on hot paths.
 
@@ -43,7 +47,8 @@ For existing codebases. Add layers progressively without breaking what works.
 **Goal:** Find what attackers will find, before they do.
 
 1. Identify modules with: network exposure, user input parsing, auth handling
-2. Configure multi-model pentest in CI
+2. Configure Stage 0 scanners (`cargo audit`, `cargo deny`, `semgrep`)
+   first, then the multi-model Stage 1
 3. Triage findings: fix critical, document informational
 4. Run on every commit to main
 
@@ -68,7 +73,7 @@ add the new form beside the old → migrate callers → remove the old.
 1. List every caller of the old module.
 2. Migrate callers one batch at a time (per package, per directory).
    Each batch is its own commit.
-3. After each batch: `cargo test` must stay green. Old module still
+3. After each batch: the test suite must stay green. Old module still
    exists, so failures are real regressions, not unfinished migrations.
 4. If a batch can't stay green alone, land all batches on an integration
    branch and verify at the end.

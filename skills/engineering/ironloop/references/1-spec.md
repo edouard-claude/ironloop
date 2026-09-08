@@ -1,4 +1,4 @@
-# Layer 1 — Specification
+# Layer 1: Specification
 
 **Who:** Human (you)
 **Cost:** Thinking time
@@ -18,11 +18,13 @@ If the spec changes, the code gets regenerated.
 
 ## What Goes In the Spec
 
-1. **What it does** — one sentence. If you need two, split the project.
-2. **Public API** — every function, trait, type that another module will call
-3. **Constraints** — language, runtime, dependency budget (max 5, justify each)
-4. **Failure modes** — what happens when things break, explicitly
-5. **Success criteria** — how you know it's done
+1. **What it does**: one sentence. If you need two, split the project.
+2. **Public API**: every function, trait, type that another module will call
+3. **Constraints**: language, runtime, dependency budget (max 5, justify each)
+4. **Failure modes**: what happens when things break, explicitly. Each row
+   becomes at least one Layer 3 test and, if Layer 4 applies, one
+   simulation scenario
+5. **Success criteria**: how you know it's done
 
 ## Anti-Patterns
 
