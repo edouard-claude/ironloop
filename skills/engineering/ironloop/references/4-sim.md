@@ -33,7 +33,7 @@ Simulation answers that question, on every commit.
 
 ## Configuration
 
-See [templates/sim.yaml](../templates/sim.yaml).
+See [assets/sim.yaml](../assets/sim.yaml).
 
 ## Completion Criterion
 

@@ -11,7 +11,7 @@ For a brand-new project. All 5 layers from the first commit.
   partitions, when input is invalid
 - The success criteria: "compiles with `cargo build --release`"
 
-Use the [spec template](templates/spec.md).
+Use the [spec template](assets/spec.md).
 
 **Do not move to Phase 2 until the spec is complete.**
 
@@ -47,7 +47,7 @@ If a test name describes the wrong behavior, flag it.
 - Run the test suite under chaos
 - Log every failure as a GitHub issue, tagged `ironloop/sim`
 
-Use the [simulation config template](templates/sim.yaml).
+Use the [simulation config template](assets/sim.yaml).
 
 ## Phase 5: PENTEST (Layer 5) — IF exposed surface
 

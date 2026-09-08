@@ -2,7 +2,7 @@
 
 **Who:** Human (you)
 **Cost:** Thinking time
-**Output:** `spec.md` (see [template](../templates/spec.md))
+**Output:** `spec.md` (see [template](../assets/spec.md))
 
 ## Completion Criterion
 

@@ -2,7 +2,8 @@
   <img src="https://img.shields.io/badge/IRONLOOP-v1.1-8B0000?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white" alt="Rust">
   <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/skills.sh-compatible-10b981?style=for-the-badge" alt="skills.sh">
+  <img src="https://img.shields.io/badge/Agent_Skills-spec_compliant-10b981?style=for-the-badge" alt="Agent Skills Spec">
+  <a href="https://skills.sh/edouard-claude/ironloop"><img src="https://skills.sh/b/edouard-claude/ironloop" alt="skills.sh"></a>
 </p>
 
 <p align="center">
@@ -111,17 +112,17 @@ Or just drop `SKILL.md` into your agent's skills directory.
 
 ```
 skills/engineering/ironloop/
-├── SKILL.md              ← Main system prompt (load this)
+├── SKILL.md              ← Main entry point (YAML frontmatter + instructions)
 ├── greenfield.md          ← New project workflow
 ├── brownfield.md          ← Legacy migration workflow
 ├── triggers.md            ← When to activate each layer
-├── layers/
+├── references/            ← Detailed docs loaded on demand
 │   ├── 1-spec.md          ← Specification layer
 │   ├── 2-gen.md           ← Generation + compiler loop
 │   ├── 3-test.md          ← TDD layer
 │   ├── 4-sim.md           ← Chaos simulation
 │   └── 5-pentest.md       ← Multi-model pentest
-└── templates/
+└── assets/                ← Templates and resources
     ├── spec.md             ← Project spec template
     └── sim.yaml            ← Simulation config
 ```
@@ -135,6 +136,15 @@ handles money, auth, and data integrity at scale — then refined through
 systematic R&D with AI coding agents.
 
 No hype. Just the harness that survived contact with reality.
+
+## Spec Compliance
+
+IRONLOOP follows the [Agent Skills open specification](https://agentskills.io/specification):
+
+- **SKILL.md** with required `name` + `description` YAML frontmatter
+- **Progressive disclosure**: `references/` loaded on demand, core instructions under 500 lines
+- **`assets/`** for templates (spec.md, sim.yaml)
+- **LLM-agnostic**: works with Claude Code, OpenAI Codex, Gemini CLI, Cursor, and any agent supporting the Agent Skills standard
 
 ## License
 

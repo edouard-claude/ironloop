@@ -1,5 +1,12 @@
-# IRONLOOP — agent skill
-# Load this as your agent's system prompt.
+---
+name: ironloop
+description: Verification-first software engineering harness with 5 layers (spec → gen → test → sim → pentest). Use when generating, reviewing, or planning code with AI agents — especially for Rust projects, new feature work, legacy migrations, or any task where code correctness must be guaranteed. Activates on phrases like "build a", "implement", "refactor", "review this code", "migrate from", "add tests for", or when the user describes a coding task with correctness or security requirements.
+license: MIT
+metadata:
+  author: edouard-claude
+  version: "1.1"
+compatibility: Requires cargo/rustc for Rust projects. Language-agnostic for spec/test layers.
+---
 
 # IRONLOOP v1.1
 
@@ -70,13 +77,43 @@ instant feedback loop that makes it the best language for AI-assisted
 development. For existing Go projects, keep the Go stack running; Rust is
 for new work and critical hot paths.
 
+## How This Skill Works
+
+This is the core skill. When triggered, it sets the verification-first
+mindset and vocabulary. For complete workflows, load the appropriate file:
+
+- **[greenfield.md](greenfield.md)** — New project workflow. Read when
+  starting a project from scratch.
+- **[brownfield.md](brownfield.md)** — Legacy migration workflow. Read when
+  working on existing codebases.
+- **[triggers.md](triggers.md)** — When to activate each layer. Consult
+  when unsure whether Layer 4 or 5 should apply.
+
+## Layer Reference
+
+Each layer is documented in `references/`. Load only when you reach that
+specific layer — not all at once.
+
+| Layer | File | Load when |
+|-------|------|-----------|
+| 1. SPEC | [references/1-spec.md](references/1-spec.md) | Before writing any code |
+| 2. GEN | [references/2-gen.md](references/2-gen.md) | After spec is signed off |
+| 3. TEST | [references/3-test.md](references/3-test.md) | After `cargo build` passes |
+| 4. SIM | [references/4-sim.md](references/4-sim.md) | Before merging distributed systems |
+| 5. PENTEST | [references/5-pentest.md](references/5-pentest.md) | Before merging exposed surfaces |
+
+## Templates
+
+Ready-to-use templates in `assets/`:
+
+- [assets/spec.md](assets/spec.md) — Project specification template
+- [assets/sim.yaml](assets/sim.yaml) — Chaos simulation configuration
+
 ## Source
 
 Distilled from production engineering experience across critical
-infrastructure, cloud platforms, and distributed systems. The patterns
-in IRONLOOP were proven across teams shipping software that handles money,
-auth, and data integrity at scale — then refined through systematic R&D
-with AI coding agents.
+infrastructure, cloud platforms, and distributed systems — then refined
+through systematic R&D with AI coding agents.
 
 The core insight: AI is inhuman — give it inhuman tasks, but wrap
 everything in an iron harness of verification.
