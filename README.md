@@ -1,4 +1,9 @@
-[![Version](https://img.shields.io/badge/IRONLOOP-v1.4-8B0000?style=for-the-badge)](https://github.com/edouard-claude/ironloop) [![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org) [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE) [![Agent Skills Spec](https://img.shields.io/badge/Agent_Skills-spec_compliant-10b981?style=for-the-badge)](https://agentskills.io/specification) [![skills.sh](https://skills.sh/b/edouard-claude/ironloop)](https://skills.sh/edouard-claude/ironloop)
+[![self-check](https://github.com/edouard-claude/ironloop/actions/workflows/ci.yml/badge.svg)](https://github.com/edouard-claude/ironloop/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/IRONLOOP-v1.4-8B0000)](https://github.com/edouard-claude/ironloop)
+[![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)](https://www.rust-lang.org)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Agent Skills](https://img.shields.io/badge/Agent_Skills-spec_compliant-10b981)](https://agentskills.io/specification)
+[![skills.sh](https://skills.sh/b/edouard-claude/ironloop)](https://skills.sh/edouard-claude/ironloop)
 
 **Code is disposable. The harness is permanent.**
 
