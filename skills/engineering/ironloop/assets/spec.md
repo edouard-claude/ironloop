@@ -27,8 +27,8 @@
 - **Language:** Rust
 - **Runtime:** [Tokio / no_std / async-std]
 - **Dependencies (max 5):**
-  1. [crate name] — because [justification]
-  2. [crate name] — because [justification]
+  1. [crate name]: because [justification]
+  2. [crate name]: because [justification]
 - **Performance:** [p99 latency / throughput / memory budget]
 - **Deployment:** [binary + CapRover / container / static]
 

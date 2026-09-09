@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/IRONLOOP-v1.3-8B0000?style=for-the-badge)](https://github.com/edouard-claude/ironloop) [![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org) [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE) [![Agent Skills Spec](https://img.shields.io/badge/Agent_Skills-spec_compliant-10b981?style=for-the-badge)](https://agentskills.io/specification) [![skills.sh](https://skills.sh/b/edouard-claude/ironloop)](https://skills.sh/edouard-claude/ironloop)
+[![Version](https://img.shields.io/badge/IRONLOOP-v1.4-8B0000?style=for-the-badge)](https://github.com/edouard-claude/ironloop) [![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org) [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE) [![Agent Skills Spec](https://img.shields.io/badge/Agent_Skills-spec_compliant-10b981?style=for-the-badge)](https://agentskills.io/specification) [![skills.sh](https://skills.sh/b/edouard-claude/ironloop)](https://skills.sh/edouard-claude/ironloop)
 
 **Code is disposable. The harness is permanent.**
 
@@ -16,9 +16,9 @@ regenerated until it does.
 
 | Layer | Name        | What happens                                          | Driver |
 | ----- | ----------- | ----------------------------------------------------- | ------ |
-| 1     | **SPEC**    | Contracts, types, interfaces, failure modes           | Human  |
+| 1     | **SPEC**    | Contracts, types, interfaces, failure modes, red tests | Human  |
 | 2     | **GEN**     | Code generation + compiler feedback loop, strict lints | Agent  |
-| 3     | **TEST**    | Test-after loop + mutation testing (proves tests can fail)   | Agent  |
+| 3     | **TEST**    | TDD loop + mutation testing (proves tests can fail)   | Agent  |
 | 4     | **SIM**     | Deterministic simulation, property tests, fuzzing     | CI     |
 | 5     | **PENTEST** | Deterministic scanners, then multi-model attack       | CI     |
 
@@ -52,14 +52,14 @@ SPEC → GEN → TEST → SIM → PENTEST
   └─────── FEEDBACK LOOPS ──────────┘
 ```
 
-- **Layer 1** defines what "correct" means before any code exists.
+- **Layer 1** defines what "correct" means and turns every failure mode
+  into a red test, before any code exists.
 - **Layer 2** lets the compiler reject bad code. The compiler is your
   first reviewer. Strict lints stop the agent from *appeasing* the
   compiler (`.clone()`, `.unwrap()`, `unsafe`) instead of solving the
   problem.
-- **Layer 3** catches everything the compiler can't. Every failure mode
-  from the spec gets at least one red-capable test, and mutation testing
-  proves the tests actually go red.
+- **Layer 3** turns the red tests green, then proves they can fail with
+  mutation testing.
 - **Layer 4** proves your code works in hell, not just in a clean room:
   deterministic simulation with recorded seeds, so every failure replays.
 - **Layer 5** finds what attackers will find, before they do:
@@ -95,20 +95,14 @@ data is uniform. Brownfield code may be in any language; the rewrite
 target is always Rust. IRONLOOP does not provide Go, Python or JS gates
 and will not.
 
-## Why not TDD?
-
-Layer 3 writes tests after Layer 2 compiles. The compiler loop is
-cheaper and deterministic, so it runs first. Red-first is replaced
-by mutation testing, which measures that every test can actually
-fail. Details in [references/3-test.md](skills/engineering/ironloop/references/3-test.md).
-
 ## Two Workflows
 
 ### Greenfield: New Projects
 
-All 5 layers from the first commit. Spec first, then generation, then
-tests, then simulation, then pentest. Never generate code before the
-spec is written. Never declare done before Layer 3 passes.
+All 5 layers from the first commit. Spec and red tests first, then
+generation, then green, then simulation, then pentest. Never generate
+code before the spec is written. Never declare done before Layer 3
+passes.
 
 ### Brownfield: Legacy Code
 
@@ -155,7 +149,7 @@ skills/engineering/ironloop/
 ├── references/            ← Detailed docs loaded on demand
 │   ├── 1-spec.md          ← Specification layer
 │   ├── 2-gen.md           ← Generation + compiler loop + anti-appeasement lints
-│   ├── 3-test.md          ← Test-after layer + mutation testing
+│   ├── 3-test.md          ← TDD layer + mutation testing
 │   ├── 4-sim.md           ← Deterministic simulation + infra chaos
 │   ├── 5-pentest.md       ← Deterministic scanners + multi-model pentest
 │   ├── cost.md            ← Gate cost budgets (per PR vs nightly)

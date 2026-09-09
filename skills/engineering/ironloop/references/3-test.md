@@ -2,45 +2,24 @@
 
 **Who:** Agent (driven by you)
 **Cost:** Tokens (test generation + execution + mutation runs)
-**Input:** Compiling code from Layer 2 + `spec.md` from Layer 1
+**Input:** Red tests from Layer 1 + compiling code from Layer 2
 **Output:** Test suite with >= 80% line coverage, >= 80% mutation score
 on spec-critical modules, 100% passing
 
 ## The Loop
 
 ```
-Agent generates tests based on spec failure modes
-  → Tests fail (code doesn't handle edge case)
-    → Agent fixes code
-      → Tests pass
-        → Agent generates more tests (you review test names)
-          → Coverage hits 80%+
-            → `cargo mutants` runs
-              → Surviving mutants → agent adds red-capable tests
-                → Mutation score hits 80%+ → All green ✓
+Red tests exist (written in Layer 1, from spec failure modes)
+  → Agent generates code (Layer 2, compiler loop until it compiles)
+    → `cargo test`: red tests go green, one by one
+      → A test stays red → agent fixes code, never the test
+        → All green
+          → Agent adds tests for edge cases (you review test names)
+            → Coverage hits 80%+
+              → `cargo mutants` runs
+                → Surviving mutants → agent adds red-capable tests
+                  → Mutation score hits 80%+ → All green ✓
 ```
-
-## Why Tests Come After Generation
-
-This is not TDD. Tests are written once the code compiles, not before.
-
-Two reasons.
-
-Two signals, two loops. Layer 2 is the compiler loop: seconds,
-deterministic, it removes a whole class of errors (ownership,
-types, exhaustiveness) before any test runs. Layer 3 is the
-behavior loop: slower, more tokens. Running a test suite against
-code that does not compile yields nothing. Cheapest signal first.
-
-Red-first does not prove anything for generated code. An agent can
-write a red test, then write code that turns it green without
-asserting the behavior. Mutation testing replaces red-first: a
-surviving mutant is a test that cannot fail, and the agent must
-make it red-capable. That is a measured guarantee, not a ritual.
-
-What stays fixed before generation is the spec: every failure mode
-in `spec.md` is already listed in Layer 1, so Layer 3 derives its
-tests from the spec, not from the implementation.
 
 ## Why Mutation Testing Is Not Optional
 
