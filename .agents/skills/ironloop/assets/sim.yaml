@@ -1,0 +1,115 @@
+# IRONLOOP Simulation Configuration
+# Layer 4: two tiers. Tier A is the merge gate, Tier B is the nightly smoke test.
+
+name: ironloop-sim
+version: 2
+
+target:
+  service: [service-name]
+  language: rust
+
+# ---------------------------------------------------------------------------
+# Tier A: in-process, deterministic, seeded. Runs on every commit.
+# Scenarios map to the Failure Modes table of spec.md, one per row minimum.
+# ---------------------------------------------------------------------------
+tier_a:
+  test_command: "cargo test --release --features sim -- --test-threads=1"
+  seed_env: IRONLOOP_SEED          # replay a failure with IRONLOOP_SEED=<seed>
+  runs_per_commit: 50              # distinct seeds per commit
+  tools:
+    network: turmoil               # simulated hosts + network faults
+    system: madsim                 # deterministic scheduler/clock/disk
+    concurrency: loom              # interleavings of critical sections
+    properties: proptest
+    fuzz:
+      tool: cargo-fuzz
+      targets: [ [parser-name] ]
+      seconds_per_target: 60       # bounded in CI, unbounded nightly
+  scenarios:
+    - id: partition-majority
+      spec_row: "Network partition"
+      fault: partition
+      hosts: [node-2]
+      duration_ms: 3000
+    - id: db-unreachable
+      spec_row: "Database down"
+      fault: hold                  # drop all packets to the DB host
+      hosts: [db]
+      duration_ms: 5000
+    - id: latency-spike
+      spec_row: "Dependency timeout"
+      fault: latency
+      latency_ms: 500
+      jitter_ms: 100
+    - id: clock-skew
+      spec_row: "Concurrent writes"
+      fault: clock_skew
+      skew_ms: 30000
+  assertions:
+    - no_data_corruption
+    - no_lost_writes
+    - no_duplicate_side_effects
+    - no_deadlocks
+    - recovery_within_ms: 60000
+
+# ---------------------------------------------------------------------------
+# Tier B: real containers, real network. Nightly and pre-release only.
+# Every Tier B failure is reduced to a Tier A scenario before closure.
+# ---------------------------------------------------------------------------
+tier_b:
+  schedule: "0 2 * * *"
+  cluster:
+    nodes: 3
+    image: [docker-image]
+    health_check:
+      command: ["curl", "-f", "http://localhost:8080/healthz"]
+      interval_seconds: 5
+      timeout_seconds: 3
+      retries: 10
+  injectors:
+    network: toxiproxy             # latency, jitter, bandwidth, timeout, partition
+    process: pumba                 # SIGKILL / SIGSTOP / SIGCONT, or chaos-mesh on k8s
+  scenarios:
+    - type: network_partition
+      probability: 0.3
+      duration_seconds: 30
+    - type: packet_loss
+      rate: 0.2
+      duration_seconds: 60
+    - type: latency_spike
+      latency_ms: 500
+      jitter_ms: 100
+      duration_seconds: 45
+    - type: process_kill
+      signal: SIGKILL
+      target: random
+      probability: 0.2
+      restart_after_seconds: 10
+    - type: process_pause
+      signal: SIGSTOP
+      duration_seconds: 15
+      target: random
+    - type: memory_pressure
+      fill_percent: 85
+      duration_seconds: 30
+    - type: disk_slow
+      latency_ms: 200
+      duration_seconds: 60
+    - type: clock_skew
+      skew_seconds: 30
+      target: random
+  assertions:
+    - no_data_corruption
+    - no_lost_writes
+    - no_deadlocks
+    - recovery_within_seconds: 60
+
+output:
+  issues:
+    create: true
+    labels: ["ironloop/sim", "automated"]
+    repository: [owner/repo]
+    include: [seed, scenario_id, node_logs, stack_trace]
+  logs:
+    retain_hours: 72
+    level: debug

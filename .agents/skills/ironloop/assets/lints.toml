@@ -1,0 +1,22 @@
+# IRONLOOP Layer 2: anti-appeasement lints
+# Paste into Cargo.toml before the first generation loop.
+# Workspace: put under [workspace.lints] and add `lints.workspace = true` to each crate.
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+unused_must_use = "deny"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
+dbg_macro = "deny"
+print_stdout = "warn"
+redundant_clone = "warn"
+arc_with_non_send_sync = "deny"
+mutex_atomic = "warn"
+large_futures = "warn"

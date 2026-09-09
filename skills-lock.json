@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "ironloop": {
+      "source": "edouard-claude/ironloop",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/ironloop/SKILL.md",
+      "computedHash": "acc1ca869967cb68b1ba35f91d4b16e984f16dae6cb7438b9d8ea8615f992d5a"
+    }
+  }
+}
