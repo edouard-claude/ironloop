@@ -18,7 +18,7 @@ regenerated until it does.
 | ----- | ----------- | ----------------------------------------------------- | ------ |
 | 1     | **SPEC**    | Contracts, types, interfaces, failure modes           | Human  |
 | 2     | **GEN**     | Code generation + compiler feedback loop, strict lints | Agent  |
-| 3     | **TEST**    | TDD loop + mutation testing (proves tests can fail)   | Agent  |
+| 3     | **TEST**    | Test-after loop + mutation testing (proves tests can fail)   | Agent  |
 | 4     | **SIM**     | Deterministic simulation, property tests, fuzzing     | CI     |
 | 5     | **PENTEST** | Deterministic scanners, then multi-model attack       | CI     |
 
@@ -95,6 +95,13 @@ data is uniform. Brownfield code may be in any language; the rewrite
 target is always Rust. IRONLOOP does not provide Go, Python or JS gates
 and will not.
 
+## Why not TDD?
+
+Layer 3 writes tests after Layer 2 compiles. The compiler loop is
+cheaper and deterministic, so it runs first. Red-first is replaced
+by mutation testing, which measures that every test can actually
+fail. Details in [references/3-test.md](skills/engineering/ironloop/references/3-test.md).
+
 ## Two Workflows
 
 ### Greenfield: New Projects
@@ -148,7 +155,7 @@ skills/engineering/ironloop/
 ├── references/            ← Detailed docs loaded on demand
 │   ├── 1-spec.md          ← Specification layer
 │   ├── 2-gen.md           ← Generation + compiler loop + anti-appeasement lints
-│   ├── 3-test.md          ← TDD layer + mutation testing
+│   ├── 3-test.md          ← Test-after layer + mutation testing
 │   ├── 4-sim.md           ← Deterministic simulation + infra chaos
 │   ├── 5-pentest.md       ← Deterministic scanners + multi-model pentest
 │   ├── cost.md            ← Gate cost budgets (per PR vs nightly)

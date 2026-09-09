@@ -20,6 +20,28 @@ Agent generates tests based on spec failure modes
                 → Mutation score hits 80%+ → All green ✓
 ```
 
+## Why Tests Come After Generation
+
+This is not TDD. Tests are written once the code compiles, not before.
+
+Two reasons.
+
+Two signals, two loops. Layer 2 is the compiler loop: seconds,
+deterministic, it removes a whole class of errors (ownership,
+types, exhaustiveness) before any test runs. Layer 3 is the
+behavior loop: slower, more tokens. Running a test suite against
+code that does not compile yields nothing. Cheapest signal first.
+
+Red-first does not prove anything for generated code. An agent can
+write a red test, then write code that turns it green without
+asserting the behavior. Mutation testing replaces red-first: a
+surviving mutant is a test that cannot fail, and the agent must
+make it red-capable. That is a measured guarantee, not a ritual.
+
+What stays fixed before generation is the spec: every failure mode
+in `spec.md` is already listed in Layer 1, so Layer 3 derives its
+tests from the spec, not from the implementation.
+
 ## Why Mutation Testing Is Not Optional
 
 An agent can write a hundred tests that pass no matter what the code
