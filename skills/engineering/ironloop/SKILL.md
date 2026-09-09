@@ -113,7 +113,7 @@ specific layer, not all at once.
 
 | Layer | File | Load when |
 |-------|------|-----------|
-| 1. SPEC | [references/1-spec.md](references/1-spec.md) | Before writing any code |
+| 1. SPEC | [references/1-spec.md](references/1-spec.md) | Before writing any code, and to run the sparring loop when no spec exists yet |
 | 2. GEN | [references/2-gen.md](references/2-gen.md) | After spec and red tests are signed off |
 | 3. TEST | [references/3-test.md](references/3-test.md) | After `cargo build` passes, to turn red tests green |
 | 4. SIM | [references/4-sim.md](references/4-sim.md) | Before merging distributed systems |
