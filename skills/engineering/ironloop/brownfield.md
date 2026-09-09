@@ -9,7 +9,7 @@ For existing codebases. Add layers progressively without breaking what works.
 1. Agent reads the legacy code module by module
 2. Agent generates unit tests that capture *current* behavior
 3. You validate: "Do these tests describe what the code actually does?"
-   (Not what it *should* do — that comes later.)
+   (Not what it *should* do: that comes later.)
 4. Run tests. Fix any that fail due to misunderstood behavior.
 5. Commit: "ironloop: layer 3 baseline for <module>"
 

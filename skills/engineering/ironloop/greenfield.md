@@ -14,6 +14,9 @@ For a brand-new project. All 5 layers from the first commit.
 
 Use the [spec template](assets/spec.md).
 
+**The agent writes the red tests from the spec failure modes.** You
+review the test names. `cargo test` must show every one of them red.
+
 **Do not move to Layer 2 until the spec is complete.**
 
 ## Layer 2: GEN
@@ -35,8 +38,9 @@ clippy output. If clippy reports `unwrap_used` and the diff adds an
 
 ## Layer 3: TEST
 
-**The agent writes tests.** You specify what to test: edge cases, failure
-modes from the spec, integration points with external systems.
+**The agent turns the red tests green, then extends the suite.** You
+specify what to test: edge cases, failure modes from the spec,
+integration points with external systems.
 
 Loop until:
 - `cargo test` passes with 100% success

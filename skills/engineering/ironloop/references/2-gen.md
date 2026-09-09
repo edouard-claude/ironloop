@@ -2,7 +2,7 @@
 
 **Who:** Agent + Compiler
 **Cost:** Tokens (generation)
-**Input:** `spec.md` from Layer 1
+**Input:** `spec.md` and the red test suite from Layer 1
 **Output:** Compiling, lint-clean, dependency-clean code
 
 ## The Loop
@@ -17,6 +17,8 @@ Agent generates code
             → `cargo clippy` rejects an appeasement pattern
               → Agent fixes the design, not the lint
                 → All gates pass ✓
+                  → `cargo test` compiles the red tests against the new
+                    code (they may still fail; Layer 3 turns them green)
 ```
 
 Use `cargo check` inside the loop, not `cargo build --release`. The loop
@@ -43,6 +45,9 @@ into `Cargo.toml` before the first generation loop. An agent that hits
 `unwrap_used` and rewrites the code to handle the error has learned
 something. An agent that adds `#[allow(clippy::unwrap_used)]` has not:
 reject the diff.
+
+Editing, weakening or `#[ignore]`-ing a red test to make it pass is
+compiler appeasement applied to tests. Forbidden.
 
 ## Completion Criterion
 
