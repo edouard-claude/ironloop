@@ -8,7 +8,12 @@
 
 **Layer 1 is closed when:** the file `spec.md` exists, contains the 5
 sections (what it does, public API, constraints, failure modes, success
-criteria), and you have read and signed off on it. Not before.
+criteria), you have read and signed off on it, and every failure mode in
+`spec.md` has a red test written by the agent and reviewed by you (test
+names only). Not before.
+
+Run `cargo test`: every new test must fail. A test that passes before any
+implementation exists is not red-capable: send it back.
 
 ## The Rule
 
