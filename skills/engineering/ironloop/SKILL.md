@@ -70,7 +70,7 @@ expected ratio by project type.
 |-------|------|---------------|------|
 | 1. SPEC | Contracts, types, interfaces, failure modes | Human (you) | Thinking |
 | 2. GEN | Code generation + compiler feedback loop, strict lints | Agent + Compiler | Tokens |
-| 3. TEST | TDD loop + mutation testing | Agent (driven by you) | Tokens |
+| 3. TEST | Test-after loop + mutation testing | Agent (driven by you) | Tokens |
 | 4. SIM | Deterministic simulation, property tests, fuzzing | Automation (CI) | CPU |
 | 5. PENTEST | Deterministic scanners, then multi-model attack | Automation (CI) | Tokens |
 
@@ -79,6 +79,10 @@ expected ratio by project type.
 For every task, apply layers in order. Never skip a layer.
 Never generate code before the specification is written.
 Never declare a task done before Layer 3 passes.
+
+Tests are written after the code compiles, never before: the
+compiler loop is cheaper than the test loop. See
+references/3-test.md "Why Tests Come After Generation".
 
 Layers 4-5 are opt-in based on criticality; see [triggers.md](triggers.md).
 
