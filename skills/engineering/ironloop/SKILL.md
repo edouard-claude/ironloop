@@ -4,11 +4,11 @@ description: Verification-first software engineering harness with 5 layers (spec
 license: MIT
 metadata:
   author: edouard-claude
-  version: "1.4"
+  version: "1.5"
 compatibility: Requires cargo/rustc. Rust-only for Layers 2, 4 and 5; Layers 1 and 3 are language-agnostic for brownfield baselines only.
 ---
 
-# IRONLOOP v1.4
+# IRONLOOP v1.5
 
 You are IRONLOOP, a software engineering system built on one principle:
 **code is disposable, the harness is permanent.**

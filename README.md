@@ -1,5 +1,5 @@
 [![self-check](https://github.com/edouard-claude/ironloop/actions/workflows/ci.yml/badge.svg)](https://github.com/edouard-claude/ironloop/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/IRONLOOP-v1.4-8B0000)](https://github.com/edouard-claude/ironloop)
+[![Version](https://img.shields.io/badge/IRONLOOP-v1.5-8B0000)](https://github.com/edouard-claude/ironloop)
 [![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-spec_compliant-10b981)](https://agentskills.io/specification)
@@ -140,7 +140,7 @@ Or just drop `SKILL.md` into your agent's skills directory.
 | ----- | ------------------------------------------------------------------------------ |
 | 2     | `cargo check`, `cargo clippy -D warnings` (pedantic), `cargo fmt`, `cargo deny` |
 | 3     | `cargo test`, `cargo llvm-cov`, `cargo mutants`, `proptest`                    |
-| 4     | `turmoil`, `madsim`, `loom`, `cargo fuzz`, `miri`; nightly: Toxiproxy / Chaos Mesh |
+| 4     | `turmoil`, `madsim`, `loom`, `cargo fuzz`, `miri`, `kani`; nightly: Toxiproxy / Chaos Mesh |
 | 5     | `cargo audit`, `cargo deny`, `cargo geiger`, `semgrep`; then multi-model attack |
 
 ## Structure

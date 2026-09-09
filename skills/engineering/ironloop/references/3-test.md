@@ -44,8 +44,45 @@ PR, plus the modules listed under Failure Modes in the spec. Set
 2. **Review coverage report**: which failure modes from the spec have zero coverage?
 3. **Review surviving mutants**: each one names a behavior nobody asserts.
    Either the behavior matters (add a test) or the code is dead (delete it).
+   Hand them back to the agent by name, one target per mutant, never as
+   "improve the tests". See "Mutants Are Prompts" below.
 4. **Flag missing edge cases**: "the spec says 'returns error on invalid UTF-8'
    but I don't see a test for that"
+
+## Mutants Are Prompts
+
+A surviving mutant is not a metric, it is a test specification. Feed each
+one back to the agent as an explicit target: the file, the line, the
+mutation that survived, and the instruction to write a test that fails
+against that mutant and passes against the original. One mutant, one
+target, one test.
+
+This is the loop Meta deployed at scale for mutation-guided test
+generation, and it is what turns the mutation score from a report into a
+gate the agent can actually close. An agent told "raise the mutation
+score" will pad the suite. An agent told "kill `replace > with >= in
+parse_bound at range.rs:41`" writes the one test that matters.
+
+## Coverage Is a Floor, Not a Proof
+
+Keep the 80% line coverage gate as hygiene, but never present it as
+evidence of correctness. Replication work on LLM-generated test suites
+found that coverage correlates well with real bug detection only on code
+that is already clean, and that the correlation collapses on code that
+actually contains bugs, which is the only case that matters here.
+
+Mutation score holds up better, which is why it is the gate that guards
+failure-mode paths. Coverage tells you which lines nobody executed.
+Mutation tells you which behaviors nobody asserted. Only the second is a
+verification.
+
+## Properties Come From the Spec
+
+Do not let the agent invent invariants. Every `proptest` property is
+derived from a row of the spec's Failure Modes table or from the Public
+API contract, the same rule Layer 4 applies to its scenarios. An
+invariant the agent chose alone tests the implementation it just wrote,
+not the contract.
 
 ## What You Do NOT Do
 

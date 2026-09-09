@@ -40,6 +40,7 @@ Rust is the ecosystem where this is mature. Pick per concern:
 | Invariants under random inputs | `proptest` | Property-based generation with shrinking |
 | Parsers, codecs, untrusted input | `cargo fuzz` | Coverage-guided fuzzing; run bounded in CI, unbounded nightly |
 | Undefined behavior in the little `unsafe` you couldn't forbid | `miri` | Interprets the tests and flags UB |
+| Invariants that must hold for *every* input, not a sample | `kani` | Bounded model checking (AWS, CBMC): `#[kani::proof]` over symbolic `kani::any()` inputs, returns a proof or a concrete counterexample |
 
 Rules:
 1. Every run logs its seed. Every failure report starts with the seed.
@@ -49,6 +50,11 @@ Rules:
    row, minimum.
 4. Assertions are invariants, not outputs: no lost write, no duplicate
    side effect, no deadlock, recovery within the window.
+5. `proptest` samples, `kani` proves. Where an invariant is small enough
+   to bound (a parser bound, an index computation, a state transition),
+   promote it from a property to a `#[kani::proof]`. A counterexample
+   from `kani` is committed as a regression test, exactly like a
+   minimized proptest failure.
 
 ## Tier B: Infrastructure Chaos
 
