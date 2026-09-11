@@ -18,6 +18,12 @@
 ² If the system has network exposure or parses user input.
 ³ Pentest on the hotfix path only, defer full surface to post-incident.
 
+Footnotes ¹ and ² are decisions, not defaults. The specification carries
+one line per layer, `REQUIRED because <the trigger above>` or `SKIPPED
+because <reason>`, and the layer runs or not on that line alone. "If
+applicable" is an exit nobody has to justify; a blank line is a stop
+(`agent-budget.md`, stop rule 7).
+
 ## Key Principle
 
 > **A bug in production is proof that the harness failed.**
@@ -59,8 +65,8 @@ at task close:
 
 | Number | Where it comes from |
 |--------|---------------------|
-| `gen-lines` | Lines added to non-test sources in the task's diff |
-| `ver-lines` | Lines added to tests, corpora, specifications, gate configuration |
+| `gen-lines` | Lines added to non-test sources in the task's diff, blank lines and comments excluded (doc comments are comments). Type declarations count: a type is generation |
+| `ver-lines` | Lines added to tests, fixtures, corpora, specifications, gate configuration, same exclusions |
 | `assertions` | Assertion count in the added tests, over public items generated |
 | `gate-runs` | `loop` lines in `ironloop.log`, per layer |
 

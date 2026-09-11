@@ -155,6 +155,22 @@ not the contract.
 - Use Testcontainers for databases, message brokers
 - One test per public API endpoint
 
+### Contract Tests
+- One per trait in the spec's Public API that abstracts an external
+  system or another module. The trait is a seam, and the seam is a
+  contract nothing else protects: three module specs describe three
+  islands, and the water between them is where the fakes drift
+- **One fake per trait, in one place** (`tests/fakes/`, or a `fakes`
+  module the crate exports behind a feature). A second fake for the same
+  trait is a divergence waiting to happen: three copies of a fake OAuth
+  client drift until one grants two scopes where the service demands
+  three, and the failure reads as a bug in the wrong place
+- The fake replays the Phase 0 fixtures. That is what keeps it honest
+- **The same suite runs against the fake and against the real
+  implementation**, the real one in the integration tier, behind a
+  feature or an env var. A contract the fake passes and the real thing
+  fails is the most valuable red the harness produces
+
 ### Property-Based Tests (`proptest`)
 - Required for parsers, serializers, codecs, math, anything with an
   invariant ("decode(encode(x)) == x", "total is conserved")
@@ -174,6 +190,10 @@ final verdict:
   elsewhere are listed with their justification, not silently counted
 - Every failure mode from the specification has at least one test whose
   name explicitly mentions it
+- `grep -rn "Error::Unimplemented" src/` returns nothing: no skeleton
+  body survives
+- Every spec trait has exactly one fake, and its contract suite has run
+  against both the fake and the real implementation
 
 No need to read the test code; names, coverage and mutation score are
 sufficient.
@@ -190,6 +210,8 @@ tautology, delete it. `cargo mutants` will find the ones you missed.
 - Every survivor classified (equivalent / clock-and-draw / proven
   elsewhere / genuine gap); zero genuine gaps on a failure-mode path
 - Every failure mode from `spec.md` has >= 1 red-capable test
+- No body still returns `Error::Unimplemented`
+- One fake per spec trait, contract suite green against fake and real
 
 ## Core Insight
 

@@ -2,20 +2,40 @@
 
 For a brand-new project. All 5 layers from the first commit.
 
+## Phase 0: Capture the outside world
+
+Greenfield has an oracle too: every third-party system the code will
+talk to. Before the spec, make the real calls, one per behavior the spec
+will depend on, and freeze the responses as fixtures under
+`tests/fixtures/<system>/`. See
+[references/1-spec.md](references/1-spec.md), "External Systems".
+
+Every Failure Modes row about an external system will cite one of those
+fixtures or carry `ASSUMED`. No fixtures, no signed Failure Modes.
+
 ## Layer 1: SPEC
 
 **You write:**
-- The public API: function signatures, types, traits
+- The public API: function signatures, types, traits. Every trait that
+  abstracts an external system or another module is a seam and gets
+  exactly one fake (Layer 3, contract tests)
 - The constraints: language (Rust by default, see language matrix in
-  SKILL.md), runtime (Tokio/no_std), dependencies
+  SKILL.md), runtime (Tokio/no_std), dependencies under the notability
+  rule
 - The failure modes: what happens when the DB is down, when the network
-  partitions, when input is invalid
+  partitions, when input is invalid, each external row with its evidence
+- The layer decisions: Layer 4 and Layer 5, one line each, `REQUIRED
+  because <trigger>` or `SKIPPED because <reason>`
 - The success criteria: the gates of Layers 2 to 5 that apply
 
 Use the [spec template](assets/spec.md).
 
-**The agent writes the red tests from the spec failure modes.** You
-review the test names. `cargo test` must show every one of them red.
+**The agent writes the skeleton from the Public API**: every type, trait
+and signature, every body returning `Err(Error::Unimplemented)`, no
+logic. **Then the red tests from the spec failure modes.** You review the
+test names. `cargo test` must compile and show every one of them failing
+on an assertion: that is red. A suite that does not build is not red, it
+is absent.
 
 **Do not move to Layer 2 until the spec is complete.**
 
@@ -34,7 +54,11 @@ Loop on `cargo check` until it passes, then close with:
 
 **You do not read the code.** You read the compiler output and the
 clippy output. If clippy reports `unwrap_used` and the diff adds an
-`#[allow]`, reject it: that is compiler appeasement.
+`#[allow]`, reject it: that is compiler appeasement. If the diff adds a
+fallback path instead (a default, a retry, a `loop {}`), reject it too:
+same thing with more lines. The agent climbs the exit ladder in
+[references/2-gen.md](references/2-gen.md), and the ladder has three
+rungs, not four.
 
 ## Layer 3: TEST
 
@@ -44,16 +68,22 @@ integration points with external systems.
 
 Loop until:
 - `cargo test` passes with 100% success
+- No body still returns `Error::Unimplemented`
 - Coverage >= 80% (`cargo llvm-cov`)
 - `cargo mutants --in-diff` plus spec failure-mode modules: >= 80% caught
 - Every failure mode from the spec has a corresponding test
+- Every spec trait has one fake, in one place, and its contract suite
+  has run against both the fake and the real implementation
 
 **You review the test names, the coverage report and the surviving
 mutants, not the test code.** If a test name describes the wrong
 behavior, flag it. If a mutant survives on a failure-mode path, the test
 is not red-capable: send it back.
 
-## Layer 4: SIM (if distributed/critical)
+## Layer 4: SIM (when the spec says REQUIRED)
+
+The spec's Layer Decisions line says whether this layer runs. `SKIPPED
+because <reason>` is a valid outcome you signed; a missing line is not.
 
 **Tier A, every commit, in-process and seeded:** `turmoil` for network
 faults, `madsim` for deterministic whole-system runs, `loom` for the
@@ -69,7 +99,11 @@ it is closed.
 
 Log every failure as a GitHub issue, tagged `ironloop/sim`.
 
-## Layer 5: PENTEST (if exposed surface)
+## Layer 5: PENTEST (when the spec says REQUIRED)
+
+Same rule. An OAuth server on the public internet is the textbook Layer 5
+trigger, and "if applicable" is how it gets skipped without anyone
+opening `triggers.md`. The decision line closes that exit.
 
 **Stage 0 on every commit:** `cargo audit`, `cargo deny check`,
 `cargo geiger`, `semgrep`, `cargo fuzz` on exposed parsers. Blocking.
@@ -89,11 +123,12 @@ inverted ratio means the harness was too light for the project type.
 
 ## Exit Criteria
 
-- [ ] Layer 1: spec.md reviewed and signed off
-- [ ] Layer 2: `cargo build`, `cargo clippy -D warnings`, `cargo fmt`, `cargo deny` pass; no unjustified `#[allow]`
-- [ ] Layer 3: `cargo test` 100%, coverage >= 80%, mutation score >= 80%
-- [ ] Layer 4: Tier A simulation green with recorded seed (if applicable)
-- [ ] Layer 5: Stage 0 green, Stage 1 zero critical confirmed findings (if applicable)
+- [ ] Phase 0: fixtures captured for every external system; `ASSUMED` rows listed and signed
+- [ ] Layer 1: spec.md reviewed and signed off; skeleton compiles; every red test fails on an assertion; Layer Decisions filled
+- [ ] Layer 2: `cargo build`, `cargo clippy -D warnings`, `cargo fmt`, `cargo deny` pass; no unjustified `#[allow]`; no fallback path added to silence a lint
+- [ ] Layer 3: `cargo test` 100%, coverage >= 80%, mutation score >= 80%, survivors classified, one fake per trait with its contract suite run against fake and real
+- [ ] Layer 4: Tier A simulation green with recorded seed, or `SKIPPED because` in the spec
+- [ ] Layer 5: Stage 0 green, Stage 1 zero critical confirmed findings, or `SKIPPED because` in the spec
 - [ ] Token ratio reported and within budget
 
 Only then is the project "done."

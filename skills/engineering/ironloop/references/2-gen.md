@@ -2,13 +2,13 @@
 
 **Who:** Agent + Compiler
 **Cost:** Tokens (generation)
-**Input:** `spec.md` and the red test suite from Layer 1
+**Input:** `spec.md`, its skeleton, and the red test suite from Layer 1
 **Output:** Compiling, lint-clean, dependency-clean code
 
 ## The Loop
 
 ```
-Agent generates code
+Agent fills the skeleton's bodies (signatures stay as the spec wrote them)
   → `cargo check` rejects it (Rust: detailed error message)
     → Agent reads error, fixes code
       → `cargo check` rejects again (different error)
@@ -39,6 +39,7 @@ patterns:
 | `#[allow(...)]` | The lints themselves | Grep in CI; every `allow` needs a comment citing the spec |
 | `todo!()` / `unimplemented!()` | The spec | `clippy::todo`, `clippy::unimplemented` |
 | `panic!()` in library code | Failure modes | `clippy::panic` |
+| A fallback path added to silence a lint (default value, retry cascade, `loop {}`) | The lint's point | No lint catches it; the exit ladder below and mutation timeouts do |
 
 The lints are the enforcement. Paste [assets/lints.toml](../assets/lints.toml)
 into `Cargo.toml` before the first generation loop. An agent that hits
@@ -48,6 +49,40 @@ reject the diff.
 
 Editing, weakening or `#[ignore]`-ing a red test to make it pass is
 compiler appeasement applied to tests. Forbidden.
+
+## When the Lint Is Right: the Exit Ladder
+
+The table says what is forbidden. It does not say what to do when the
+lint is right and the honest fix is not local. Left alone with
+`unwrap_used` on `Url::parse("https://api.example.com")`, an agent
+writes a fallback cascade that ends in `loop {}`: strictly worse than the
+`unwrap`, unreachable by any test, and a factory for mutation timeouts.
+
+**A lint fix that adds a path no test can reach is itself appeasement.**
+Climb the ladder instead, in order, and stop at the first rung that
+holds:
+
+1. **Propagate.** Change the signature to return `Result` and let the
+   caller decide. Most `unwrap` sites are a function that should have
+   been fallible from the start; the lint is saying the spec's Public
+   API is missing an error. Re-spec, then change the signature.
+2. **Make the invalid state unrepresentable.** Parse at the boundary,
+   once, into a type that cannot be wrong afterwards: a `Url` built from
+   the literal in one place (`LazyLock`, or a constructor the tests
+   exercise), a newtype validated on construction, an enum instead of a
+   string. The `unwrap` disappears because the question it answered no
+   longer exists on the hot path.
+3. **Prove it infallible, then allow it.** For the residue (a literal
+   that cannot fail to parse, a match the compiler cannot see is
+   exhaustive), a scoped `#[allow]` on that one expression, with a
+   comment stating the proof. This is the only rung where `allow` is
+   honest, and it is the last one.
+
+There is no fourth rung. No default value the spec did not name, no
+retry the spec did not bound, no `loop {}`, no `std::process::exit`.
+Each of those is a failure mode the spec does not have, added to make a
+lint go quiet. If none of the three rungs fits, the spec is missing a
+row: back to Layer 1.
 
 ## Completion Criterion
 

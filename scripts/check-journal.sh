@@ -24,5 +24,21 @@ else
   echo "  journal empty: warn (not blocking)"
 fi
 
+echo "== layer decisions"
+# Layers 4 and 5 are decided in writing in spec.md: REQUIRED or SKIPPED, with a
+# reason. A placeholder or an empty line is a stop (agent-budget.md, rule 7).
+spec="$root/spec.md"
+if [ -f "$spec" ]; then
+  for layer in "Layer 4 (SIM)" "Layer 5 (PENTEST)"; do
+    if grep -qE "^- \*\*${layer//(/\\(}:\*\* (REQUIRED|SKIPPED) because .+" "$spec"; then
+      echo "  $layer: decided"
+    else
+      echo "  $layer: no REQUIRED/SKIPPED line with a reason in spec.md"; fail=1
+    fi
+  done
+else
+  echo "  no spec.md at repo root (skipping)"
+fi
+
 if [ "$fail" -ne 0 ]; then echo "CHECK-JOURNAL FAILED"; exit 1; fi
 echo "CHECK-JOURNAL OK"

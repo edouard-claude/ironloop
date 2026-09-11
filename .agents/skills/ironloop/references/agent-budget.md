@@ -40,6 +40,8 @@ The agent stops and hands back to the human when any of these is true:
    workflow, or any file under `assets/` : these are human-owned; any
    diff there is a stop
 6. Wall clock > 2 h on a single task
+7. The specification's Layer Decisions section has an empty line for
+   Layer 4 or Layer 5: neither `REQUIRED because` nor `SKIPPED because`
 
 Stopping is a success state. Burning the reserve to avoid stopping is a
 failure state.
