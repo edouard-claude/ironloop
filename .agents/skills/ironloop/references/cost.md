@@ -26,6 +26,35 @@ Total blocking budget per PR: **< 40 min**. Above that, the agent must
 scope down following the rules in the last column, and report which
 gate was scoped and why in the PR under `ironloop-scoped:`.
 
+## Disk Budget
+
+Time is not the only budget a gate spends. Layers 3 and 4 write far more
+to disk than Layer 2 does, and a harness that fills the disk gets turned
+off just as fast as one that is slow.
+
+| Artifact | Written by | Typical size | Cleanup |
+|----------|-----------|--------------|---------|
+| `target/debug` | the Layer 2 `cargo check` loop | 300 MB to 2 GB | Never inside the loop |
+| `target/mutants.out` | `cargo mutants` | one build tree per `--jobs` | `cargo clean` after a full-tree run |
+| `*.profraw`, coverage profiles | `cargo llvm-cov` | roughly a second `target` | `cargo llvm-cov clean` after the report |
+| fuzz corpus | `cargo fuzz` | grows without bound | Keep it, but minimize with `cargo fuzz cmin` |
+
+Three rules:
+
+1. **Never clean inside a loop.** `cargo clean` before a Layer 2 `cargo
+   check` destroys the dependency cache and blows the 30 s budget on the
+   next iteration. Clean at layer close, never at layer start.
+2. **Share one target directory.** Set `CARGO_TARGET_DIR` to a single
+   path for all projects, otherwise every crate pays for its own copy of
+   the same dependency builds.
+3. **Sweep on a schedule, not by hand.** `cargo sweep --time 30` in the
+   nightly job, alongside the gates that run there. An artifact nobody
+   has read in a month is not a cache, it is garbage.
+
+Full-tree `cargo mutants` is the one gate that can double disk usage
+without warning, since it copies the build tree per parallel job. Run it
+nightly, and make `cargo clean` the last step of that job.
+
 ## Scoping Is Not Skipping
 
 Scoped means: the same gate, on a smaller surface, with the full surface

@@ -45,12 +45,31 @@ If your ratio is inverted, you're doing it wrong.
 
 ## Measuring the Ratio
 
-The ratio is a measurement, not a slogan. Count tokens per layer:
+The ratio is a measurement, not a slogan, which means it has to come from
+something countable. Per-layer token accounting is not visible to the
+agent from inside a run: if your runtime exposes it, count tokens per
+layer (generation = every agent turn in Layer 2 including compiler-fix
+loops; verification = every agent turn in Layers 3 and 5, plus test and
+mutation generation loops) and compare against the table above. If it
+does not, do not estimate the ratio and do not assert it. Count the
+proxy instead.
 
-- Generation: every agent turn in Layer 2 (including compiler-fix loops)
-- Verification: every agent turn in Layers 3 and 5, plus test and mutation
-  generation loops
+**The verification ledger.** Four numbers, all mechanically obtainable
+at task close:
 
-Report the two totals and the ratio in the PR description under
-`ironloop-ratio:`. A PR without a ratio is not closed. Layer 4 is CPU,
-not tokens; report its wall-clock time separately.
+| Number | Where it comes from |
+|--------|---------------------|
+| `gen-lines` | Lines added to non-test sources in the task's diff |
+| `ver-lines` | Lines added to tests, corpora, specifications, gate configuration |
+| `assertions` | Assertion count in the added tests, over public items generated |
+| `gate-runs` | `loop` lines in `ironloop.log`, per layer |
+
+`ver-lines / gen-lines` is the proxy ratio, read against the same table.
+It is coarser than tokens and it is honest, which is the trade that
+matters: a declared ratio nobody can check is worth less than a crude
+one anybody can recompute from the diff.
+
+Report the ledger and the ratio in the PR description under
+`ironloop-ratio:`, and name which measure it is (`tokens` or `ledger`).
+A PR without a ratio is not closed. Layer 4 is CPU, not tokens; report
+its wall-clock time separately.
