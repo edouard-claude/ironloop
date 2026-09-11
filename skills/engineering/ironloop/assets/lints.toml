@@ -20,3 +20,24 @@ redundant_clone = "warn"
 arc_with_non_send_sync = "deny"
 mutex_atomic = "warn"
 large_futures = "warn"
+
+# --- Test targets -----------------------------------------------------------
+#
+# `unwrap_used`, `expect_used` and `panic` apply to every target, tests
+# included, and there a failing assertion *is* a panic and `.unwrap()` on a
+# fixture is the correct code. Left as-is, `cargo clippy --all-targets` fails
+# on correct tests and the agent starts appeasing the linter in the suite,
+# which is the exact failure mode these lints exist to prevent.
+#
+# The three lints above are library discipline. Relax them, and only them, at
+# the top of every test target, with the reason spelled out:
+#
+#   #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+#   //! Test target: a failed assertion is a panic, fixtures are known-good.
+#
+# Same line in `#[cfg(test)] mod tests` blocks, as an inner attribute. Do not
+# widen it: `pedantic`, `dbg_macro` and `todo` stay denied in tests.
+#
+# Never relax them by deleting the deny in this file, and never with a bare
+# `#![allow]` that carries no reason: a blanket allow at workspace level lets
+# an `.unwrap()` back into the library, where it is a Layer 2 defect.

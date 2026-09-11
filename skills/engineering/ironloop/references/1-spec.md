@@ -84,3 +84,15 @@ When extracting specs from existing code, the agent generates a draft.
 You review and edit. The spec must reflect *desired* behavior, not
 necessarily *current* behavior. Gaps between spec and code become
 issues for the next rewrite cycle.
+
+A brownfield spec carries one extra section, **Oracle**, written during
+Phase 0 and before any capture:
+
+- every backing service the legacy can touch, with the check that proves
+  it reachable *from inside the legacy*
+- every piece of state the legacy keeps between requests, with how it is
+  reset before each recorded case
+
+Without it, a capture taken against a partially-down stack looks exactly
+like a capture of a contract with no write seam, and every later layer
+agrees on it. See [brownfield.md](../brownfield.md), Phase 0.

@@ -50,6 +50,21 @@
 |----------|--------------|-----------|
 | [ ] | [ ] | [ ] |
 
+## Oracle (brownfield only)
+
+Filled during Phase 0, before any capture. Delete this section for
+greenfield.
+
+| Backing service | Reachability check, from inside the legacy |
+|-----------------|--------------------------------------------|
+| [db / cache / broker / API / fs] | [the assertion that proves it live] |
+
+| State kept between requests | Reset before each case by |
+|-----------------------------|---------------------------|
+| [per-worker connection, tenant context, static cache] | [the reset] |
+
+Corpus replayed twice in a different order, identical output: [yes/no]
+
 ## Budget
 
 - **Task budget:** [tokens, default 500k]

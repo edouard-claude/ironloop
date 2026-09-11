@@ -21,6 +21,12 @@ its own usage after each loop and compares.
 Task budget is set by the human in the spec (`## Budget` section, see
 `assets/spec.md`). Default when absent: 500k tokens.
 
+Ceilings are enforceable only where the runtime shows the agent its own
+usage. Where it does not, the `close` line carries the verification
+ledger from `triggers.md` instead of a token count, and the stop rules
+below carry the run: they fire on loop counts, repeated survivors and
+wall clock, none of which need token accounting.
+
 ## Global Stop Rules
 
 The agent stops and hands back to the human when any of these is true:
@@ -78,7 +84,8 @@ You do not read the code. You read `ironloop.log`:
 - every `choice` line: is the reason consistent with the spec?
 - every `scope` line: is there a nightly job covering the rest?
 - every `stop` line: what does the agent need from you?
-- the `close` lines: is the ratio (L3+L5) / L2 within `triggers.md`?
+- the `close` lines: is the ratio (L3+L5) / L2 within `triggers.md`,
+  whether it is reported in tokens or as the verification ledger?
 
 Five minutes on the journal replaces an hour on the diff.
 
